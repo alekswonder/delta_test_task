@@ -149,3 +149,5 @@ class Photo(AbstractThing):
 
     class Meta:
         default_related_name = 'photos'
+        verbose_name = 'Фотография'
+        verbose_name_plural = 'Фотографии'
