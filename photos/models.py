@@ -74,7 +74,7 @@ class Country(AbstractLocation):
     capital = models.OneToOneField(
         "City",
         on_delete=models.CASCADE,
-        verbose_name='Столица'
+        verbose_name='Столица',
     )
     currency = models.CharField(
         verbose_name='Валюта',
@@ -82,7 +82,7 @@ class Country(AbstractLocation):
     )
 
     class Meta:
-        default_related_name = 'country'
+        default_related_name = 'capital'
         verbose_name = 'Страна'
         verbose_name_plural = 'Страны'
 
