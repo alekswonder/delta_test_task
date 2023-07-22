@@ -45,8 +45,10 @@ class AbstractThing(models.Model):
     )
     owner = models.ForeignKey(
         User,
-        on_delete=models.SET_NULL,
-        verbose_name='Владелец'
+        on_delete=models.CASCADE,
+        verbose_name='Владелец',
+        null=True,
+        blank=True
     )
 
     class Meta:
@@ -88,13 +90,15 @@ class Country(AbstractLocation):
 class City(AbstractLocation):
     country = models.ForeignKey(
         Country,
-        on_delete=models.SET_NULL,
-        verbose_name='Страна'
+        on_delete=models.CASCADE,
+        verbose_name='Страна',
     )
     item = models.ForeignKey(
         Item,
-        on_delete=models.CASCADE,
-        verbose_name='Вещь'
+        on_delete=models.SET_NULL,
+        verbose_name='Вещь',
+        null=True,
+        blank=True
     )
 
     class Meta:
@@ -106,31 +110,41 @@ class City(AbstractLocation):
 class Photo(AbstractThing):
     image = models.ImageField(
         verbose_name='Картинка',
-        upload_to='photos/'
+        upload_to='photos/',
+        null=True,
+        blank=True
     )
     country = models.ForeignKey(
         Country,
-        on_delete=models.SET_NULL,
-        verbose_name='Страна'
+        on_delete=models.CASCADE,
+        verbose_name='Страна',
+        null=True,
+        blank=True
     )
     city = models.ForeignKey(
         City,
-        on_delete=models.SET_NULL,
-        verbose_name='Город'
+        on_delete=models.CASCADE,
+        verbose_name='Город',
+        null=True,
+        blank=True
     )
     item = models.ForeignKey(
         Item,
-        on_delete=models.SET_NULL,
-        verbose_name='Вещь'
+        on_delete=models.CASCADE,
+        verbose_name='Вещь',
+        null=True,
+        blank=True
     )
     owner = models.ForeignKey(
         User,
-        on_delete=models.SET_NULL,
-        verbose_name='Владелец'
+        on_delete=models.CASCADE,
+        verbose_name='Владелец',
+        null=True,
+        blank=True
     )
     is_approved = models.BooleanField(
         default=True,
-        verbose_name=''
+        verbose_name='Одобрено администратором'
     )
 
     class Meta:
