@@ -21,7 +21,8 @@ INSTALLED_APPS = [
     'django',
     'rest_framework',
 
-    'photos.apps.PhotosConfig'
+    'photos.apps.PhotosConfig',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
