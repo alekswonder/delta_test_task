@@ -63,13 +63,25 @@ class Item(AbstractThing):
 
 
 class Country(AbstractLocation):
+    GOVERNMENT_TYPES = (
+        'absolute_monarchy', 'constitutional_monarchy', 'dualistic_monarchy', 'parliament_monarchy',
+        'president_republic', 'parliament_republic', 'mixed_republic'
+    )
+    GOVERNMENT_TYPES_RU = ('Абсолютная монархия', 'Конституционная монархия', 'Дуалистическая монархия',
+                           'Парламентская монархия', 'Президентская республика', 'Парламентская республика',
+                           'Смешанная республика')
+    CHOICES = tuple(zip(GOVERNMENT_TYPES, GOVERNMENT_TYPES_RU))
+
     official_language = models.CharField(
         verbose_name='Официальный язык',
         max_length=255
     )
     government_type = models.CharField(
-        verbose_name='Тип правления',
-        max_length=255
+        verbose_name='Форма правления',
+        max_length=len(max(GOVERNMENT_TYPES, key=len)),
+        choices=CHOICES,
+        blank=True,
+        null=True
     )
     capital = models.OneToOneField(
         "City",
@@ -79,6 +91,8 @@ class Country(AbstractLocation):
     currency = models.CharField(
         verbose_name='Валюта',
         max_length=255,
+        blank=True,
+        null=True
     )
 
     class Meta:
