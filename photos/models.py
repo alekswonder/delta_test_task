@@ -9,6 +9,9 @@ class AbstractLocation(models.Model):
         max_length=255,
         verbose_name='Название',
     )
+    slug = models.SlugField(
+        unique=True
+    )
     founding_date = models.DateField(
         verbose_name='Дата основания'
     )
