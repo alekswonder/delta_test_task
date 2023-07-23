@@ -1,24 +1,50 @@
+from django.contrib.auth import get_user_model
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.status import HTTP_403_FORBIDDEN
+
 from photos.models import Item, Country, City, Photo
-from rest_framework import viewsets
 
-from .serializers import ItemSerializer, CountrySerializer, CitySerializer, PhotoSerializer
+from .serializers import PhotoSerializer
 
-
-class ItemViewSet(viewsets.ModelViewSet):
-    queryset = Item.objects.all()
-    serializer_class = ItemSerializer
+User = get_user_model()
 
 
-class CountryViewSet(viewsets.ModelViewSet):
-    queryset = Country.objects.all()
-    serializer_class = CountrySerializer
+@api_view(('GET',))
+def list_unapproved_photos(request):
+    """Отобразить все не одобренные фото (работает только для модераторов и администраторов)"""
+    if request.user.is_staff:
+        unapproved_photos = Photo.photos_manager.unapproved_photos()
+        return Response(PhotoSerializer(unapproved_photos, many=True).data)
+    return Response({'message': 'You do not have permissions'})
 
 
-class CityViewSet(viewsets.ModelViewSet):
-    queryset = City.objects.all()
-    serializer_class = CitySerializer
+@api_view(('GET',))
+def list_all_approved_photos(request):
+    """Отобразить все одобренные фото"""
+    approved_photos = Photo.photos_manager.approved_photos()
+    return Response(PhotoSerializer(approved_photos, many=True).data, status=HTTP_403_FORBIDDEN)
 
 
-class PhotoViewSet(viewsets.ModelViewSet):
-    queryset = Photo.photos_manager.approved_photos()
-    serializer_class = PhotoSerializer
+@api_view(('GET',))
+def list_approved_photos_by_entity(request, entity):
+    """Отобразить все фото, которые относятся к сущности"""
+    approved_photos_by_entity = Photo.photos_manager.approved_photos_for_entity(entity
+                                                                                ).prefetch_related('owner', 'country',
+                                                                                                   'city', 'item')
+    return Response(PhotoSerializer(approved_photos_by_entity, many=True).data)
+
+
+@api_view(('GET',))
+def list_approved_photos_by_concrete_entity(request, entity, pk):
+    """Отобразить все фото конкретной сущности"""
+    approved_photos_by_concrete_entity = list()
+    if entity == 'owners':
+        approved_photos_by_concrete_entity = User.objects.get(pk=pk).photos.all()
+    elif entity == 'countries':
+        approved_photos_by_concrete_entity = Country.objects.get(pk=pk).photos.all()
+    elif entity == 'cities':
+        approved_photos_by_concrete_entity = City.objects.get(pk=pk).photos.all()
+    elif entity == 'items':
+        approved_photos_by_concrete_entity = Item.objects.get(pk=pk).photos.all()
+    return Response(PhotoSerializer(approved_photos_by_concrete_entity, many=True).data)

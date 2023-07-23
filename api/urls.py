@@ -1,15 +1,12 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import ItemViewSet, CountryViewSet, CityViewSet, PhotoViewSet
-
-router = DefaultRouter()
-
-router.register(r'items', ItemViewSet, basename='items')
-router.register(r'countries', CountryViewSet, basename='country')
-router.register(r'cities', CityViewSet, basename='city')
-router.register(r'photos', PhotoViewSet, basename='photo')
+from .views import (list_unapproved_photos, list_all_approved_photos,
+                    list_approved_photos_by_entity, list_approved_photos_by_concrete_entity)
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('photos/unapproved-photos/', list_unapproved_photos),
+    path('photos/', list_all_approved_photos),
+    path('photos/<str:entity>/', list_approved_photos_by_entity),
+    path('photos/<str:entity>/<int:pk>/', list_approved_photos_by_concrete_entity)
 ]

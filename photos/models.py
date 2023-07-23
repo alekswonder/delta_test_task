@@ -143,15 +143,15 @@ class PhotoManager(models.Manager):
     def approved_photos(self):
         return self.filter(is_approved=True)
 
-    def approved_photos_for_entity(self, entity_type, entity_id):
-        if entity_type == 'country':
-            return self.filter(country_id=entity_id, is_approved=True)
-        elif entity_type == 'city':
-            return self.filter(city_id=entity_id, is_approved=True)
-        elif entity_type == 'item':
-            return self.filter(item_id=entity_id, is_approved=True)
-        elif entity_type == 'user':
-            return self.filter(user_id=entity_id, is_approved=True)
+    def approved_photos_for_entity(self, entity_type):
+        if entity_type == 'countries':
+            return self.filter(owner=None, item=None, city=None, is_approved=True)
+        elif entity_type == 'cities':
+            return self.filter(owner=None, country=None, item=None, is_approved=True)
+        elif entity_type == 'items':
+            return self.filter(owner=None, country=None, city=None, is_approved=True)
+        elif entity_type == 'users':
+            return self.filter(item=None, country=None, city=None, is_approved=True)
         else:
             return self.none()
 
