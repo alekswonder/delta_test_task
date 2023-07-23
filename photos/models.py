@@ -58,16 +58,6 @@ class AbstractThing(models.Model):
         abstract = True
 
 
-class Item(AbstractThing):
-    class Meta:
-        default_related_name = 'items'
-        verbose_name = 'Вещь'
-        verbose_name_plural = 'Вещи'
-
-    def __str__(self):
-        return self.title
-
-
 class Country(AbstractLocation):
     GOVERNMENT_TYPES = (
         'absolute_monarchy', 'constitutional_monarchy', 'dualistic_monarchy', 'parliament_monarchy',
@@ -118,13 +108,6 @@ class City(AbstractLocation):
         blank=True,
         null=True
     )
-    item = models.ForeignKey(
-        Item,
-        on_delete=models.SET_NULL,
-        verbose_name='Вещь',
-        null=True,
-        blank=True
-    )
 
     class Meta:
         default_related_name = 'cities'
@@ -137,6 +120,24 @@ class City(AbstractLocation):
 
     def __str__(self):
         return self.name
+
+
+class Item(AbstractThing):
+    city = models.ForeignKey(
+        City,
+        on_delete=models.CASCADE,
+        verbose_name='Город',
+        blank=True,
+        null=True
+    )
+
+    class Meta:
+        default_related_name = 'items'
+        verbose_name = 'Вещь'
+        verbose_name_plural = 'Вещи'
+
+    def __str__(self):
+        return self.title
 
 
 class PhotoManager(models.Manager):
