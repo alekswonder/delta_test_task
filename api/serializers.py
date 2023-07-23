@@ -54,4 +54,10 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photo
-        fields = '__all__'
+        fields = ('title', 'description', 'image', 'owner', 'country', 'city', 'item')
+        read_only_fields = ('owner', 'country', 'city', 'item')
+
+    def to_representation(self, instance):
+        """Убираем из ответа на запрос поля без ссылок"""
+        data = super().to_representation(instance)
+        return {key: value for key, value in data.items() if value is not None}

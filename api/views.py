@@ -48,3 +48,32 @@ def list_approved_photos_by_concrete_entity(request, entity, pk):
     elif entity == 'items':
         approved_photos_by_concrete_entity = Item.objects.get(pk=pk).photos.all()
     return Response(PhotoSerializer(approved_photos_by_concrete_entity, many=True).data)
+
+
+@api_view(('GET',))
+def list_every_photo_from_given_entity_by_its_name(request, entity, name):
+    """Задача, соответсвующая ТЗ, где в зависимости от конкретной сущности,
+       нужно получить все относящиеся к ней данные"""
+    photos = []
+    if entity == 'countries':
+        country = Country.objects.get(name=name)
+        photos.extend(country.photos.all())
+        cities = country.cities.all()
+        for city in cities:
+            photos.extend(city.photos.all())
+        items = []
+        for city in cities:
+            items.extend(city.items.all())
+        for item in items:
+            photos.extend(item.photos.all())
+    if entity == 'cities':
+        city = City.objects.get(name=name)
+        photos.extend(city.photos.all())
+        items = city.items.all()
+        for item in items:
+            photos.extend(item.photos.all())
+    if entity == 'items':
+        item = Item.objects.get(title=name)
+        photos.extend(item.photos.all())
+
+    return Response(PhotoSerializer(photos, many=True).data)
