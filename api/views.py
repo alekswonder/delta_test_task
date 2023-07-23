@@ -57,23 +57,23 @@ def list_every_photo_from_given_entity_by_its_name(request, entity, name):
     photos = []
     if entity == 'countries':
         country = Country.objects.get(name=name)
-        photos.extend(country.photos.all())
+        photos.extend(country.photos.approved_photos())
         cities = country.cities.all()
         for city in cities:
-            photos.extend(city.photos.all())
+            photos.extend(city.photos.approved_photos())
         items = []
         for city in cities:
             items.extend(city.items.all())
         for item in items:
-            photos.extend(item.photos.all())
+            photos.extend(item.photos.approved_photos())
     if entity == 'cities':
         city = City.objects.get(name=name)
-        photos.extend(city.photos.all())
+        photos.extend(city.photos.approved_photos())
         items = city.items.all()
         for item in items:
-            photos.extend(item.photos.all())
+            photos.extend(item.photos.approved_photos())
     if entity == 'items':
         item = Item.objects.get(title=name)
-        photos.extend(item.photos.all())
+        photos.extend(item.photos.approved_photos())
 
     return Response(PhotoSerializer(photos, many=True).data)
